@@ -3,8 +3,13 @@ package submarineGameProject.main;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import submarineGameProject.Classes.Board;
 import submarineGameProject.Classes.Submarine;
+import submarineGameProject.Exceptions.BoardException;
+import submarineGameProject.Exceptions.CoordinateException;
+import submarineGameProject.Exceptions.SubmarineException;
 
 public class Game 
 {
@@ -15,10 +20,13 @@ public class Game
 	private int missNumber;
 	private Status status;
 	private int points = 1000;
-	private int firstHitPoints;
+	private int secondtHitPoints;
 	public  int numberOfSubmarineThatFound = 1;
 	private int submarineLengthCounter=1;
-	private boolean flag=false;
+	private boolean flagOfDoubleHit;
+	private boolean flagCheckCoordinate;
+	private boolean flagCheckCoordinateOnBoard;
+
 	
 	//Constructor
 	public Game() 
@@ -27,6 +35,7 @@ public class Game
 		this.hitsNumber = 0; //default value
 		this.missNumber = 0; //default value
 		status = Status.PLAY;  //default value
+		setDoubleHit(false);
 	}
 
 	private void setNumOfHits(int numOfHits) 
@@ -43,84 +52,135 @@ public class Game
 	{
 		return points;
 	}
+	
+	
+	private boolean isDoubleHit() 
+	{
+		return flagOfDoubleHit;
+	}
+	
+	private void setDoubleHit(boolean flagOfDoubleHit) 
+	{
+		this.flagOfDoubleHit = flagOfDoubleHit;
+	}
 
 	public void setPointsHit() 
 	{		
-		System.out.println(numberOfSubmarineThatFound);
-		System.out.println(Submarine.coord1.getX());
-		System.out.println(Board.randomRow);
-		System.out.println(board.getSubmaribeLength());
 		
-		if(numberOfSubmarineThatFound == 1)
+		if(flagOfDoubleHit == true && secondtHitPoints==1000)
 		{
-			firstHitPoints = points;
-			this.points = points + 200;					
-			numberOfSubmarineThatFound++;		
+			this.points+=secondtHitPoints;
 		}
 		else
 		{
-			if((this.points-firstHitPoints) == 200)
-			{
-				flag = true;	
-			}
-			else
-			{
-				flag = false;	
-			}
-			
-			if (numberOfSubmarineThatFound == 2 && (Submarine.coord1.getX() == Board.randomRow) && flag == true) 
-			{
-				this.points = points + 1000;
-				flag = false;
-				numberOfSubmarineThatFound++;
-			}
-			
-			if(flag = true) 
-			{				
-				this.numberOfSubmarineThatFound = 1;
-				
-			}
+			this.points+=200;
+			setDoubleHit(true);
+			secondtHitPoints=1000;
 		}
-
+		
 	}
+	
 	
 	public void setPointsMiss() 
 	{
+		setDoubleHit(false);
 		this.points = points - 10;
 
 	}
 	
-	public void play() 
+	
+	public void play() throws SubmarineException //throws BoardException, CoordinateException, SubmarineException 	
+, BoardException
 	{		
 		Random random = new Random();
 		int rowChoice;
 		int colChoice;
+		char resultVal;
 		
+		boolean breakOrContinue = true;
 		System.out.println("Lets start the game...\n");
 		Board.printConsole();
 		
 		while(status == Status.PLAY) 
-		{
-			System.out.print("Enter row: ");
-			rowChoice = scanner.nextInt();
-			System.out.print("Enter col: ");
-			colChoice = scanner.nextInt();
-			
-		//	rowChoice = random.nextInt(Board.ROWS);
-		//	colChoice = random.nextInt(Board.COLS);
-			System.out.println("("+rowChoice+","+colChoice+")");
-			scoreOfTheGame(board.changeTheBoard(rowChoice, colChoice));
-			Board.print();
-			System.out.println("The miss number is: "+this.missNumber);
-			System.out.println("The hit number is: "+this.hitsNumber);
-			statusInTheGame();
-			System.out.println("Your status is: "+status);
-			System.out.println("Your Points is: "+points);
-		}
+		{	
+			while(breakOrContinue = true)
+			{
+				System.out.print("Enter row: ");
+				rowChoice = scanner.nextInt();
+				System.out.print("Enter col: ");
+				colChoice = scanner.nextInt();
 
+				// rowChoice = random.nextInt(Board.ROWS);
+				// colChoice = random.nextInt(Board.COLS);		
+				
+				flagCheckCoordinateOnBoard = checkIfCoordinateInRange(rowChoice,colChoice);	
+				if(flagCheckCoordinateOnBoard)
+				{					
+					break;
+				}	
+				flagCheckCoordinate = (board.XYmatrix[rowChoice][colChoice]==' ') || (board.XYmatrix[rowChoice][colChoice]=='*');
+				if(!flagCheckCoordinate)
+				{
+						System.out.println("Watch out please! ~> you choiced this coordinate before.");	
+						break;
+				}
+				
+				continueCheackingBoard(rowChoice,colChoice);				
+			}
+
+			if (!board.checkIfThereIsASubmarineAtBoard()) 
+			{
+				this.status = Status.WIN;
+				//throw new SubmarineException();
+			}
+			
+			
+		}
+		
 		System.out.println("You " + status + " the game!");
 	}
 	
+	public void continueCheackingBoard(int rowChoice,int colChoice)
+	{
+		System.out.println("Your Guess is: (" + rowChoice + "," + colChoice + ")");
+		scoreOfTheGame(board.changeTheBoard(rowChoice, colChoice));
+		Board.print();
+		System.out.println("The miss number is: " + this.missNumber);
+		System.out.println("The hit number is: " + this.hitsNumber);
+		statusInTheGame();
+		System.out.println("Your status is: " + status);
+		System.out.println("Your Points is: " + points);
+	}
+	
+	
+	public boolean checkIfCoordinateInRange(int row, int col) 
+	{
+		boolean flagCheckX = checkCoordinateRange(row, board.ROWS, "Row");
+		boolean flagCheckY =checkCoordinateRange(col, board.COLS, "Col");
+		if((flagCheckX || flagCheckY))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean checkCoordinateRange(int index, int max, String nameOfIndex) //throws BoardException 
+	{
+		if (index < 0 || index >= max)
+		{
+			System.out.println("Its Invalid number of "+nameOfIndex+", it should be between 0 and " + (max - 1));
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+			
+	}
+		
 	public void statusInTheGame() 
 	{
 		if(hitsNumber + missNumber == 100) 
@@ -132,7 +192,7 @@ public class Game
 			else
 			{
 				this.status = Status.LOST;
-			}
+			}			
 		}
 	}
 

@@ -8,7 +8,7 @@ public class Submarine
 
 	 public static Coordinate coord1 = null;
 	 public static Coordinate coord2 = null;
-	 
+	 public static final char PATTERN = '*';
 	 private int submarineLength=4;
 	
 	

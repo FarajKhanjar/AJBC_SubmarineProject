@@ -3,10 +3,14 @@ package submarineGameProject.Classes;
 import java.util.Arrays;
 import java.util.Random;
 
+import submarineGameProject.Exceptions.BoardException;
+import submarineGameProject.Exceptions.CoordinateException;
+import submarineGameProject.Exceptions.SubmarineException;
+
 public class Board 
 {
 	Random random = new Random();
-	private static char[][] XYmatrix;
+	public static char[][] XYmatrix;
 	private Submarine submarines;	
 	public static int ROWS = 10;
 	public static int COLS = 20;
@@ -14,12 +18,14 @@ public class Board
 	public static int SUBMARINE_LENGTH = 4;
 	public static int randomLength;
 	public static int randomRow;
+	private boolean flagThatThereIsASubmarine=false;
+	private static int patternsNumberThatHit;
 
 	public Board() 
 	{
 		XYmatrix = new char[ROWS][COLS];
 		initBoard();
-		ininSubmariens();
+		placeTheSubmarineOnBoard();
 	}
 	
 	public int getSubmaribeLength()
@@ -38,7 +44,7 @@ public class Board
 		}
 	}
 	
-	public void ininSubmariens() 
+	public void placeTheSubmarineOnBoard() 
 	{		
 		int index=0;
 		int rowRandom;	
@@ -74,7 +80,7 @@ public class Board
 			}
 		}
 	}
-
+	
 	public static void print() 
 	{
 		int rowsNum = 10 ;
@@ -148,5 +154,23 @@ public class Board
 		}
 		
 		return (XYmatrix[row][col]);
+	}
+	
+	
+	public boolean checkIfThereIsASubmarineAtBoard() 
+	{		
+		for (int i = 0; i < ROWS; i++) 
+		{
+			for (int j = 0; j < COLS; j++) 
+			{
+				if(XYmatrix[i][j] == '*')
+				{
+					flagThatThereIsASubmarine = true;
+					return flagThatThereIsASubmarine;				
+				}
+					
+			}
+		}
+		return false;
 	}
 }

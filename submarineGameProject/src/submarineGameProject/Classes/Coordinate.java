@@ -1,8 +1,8 @@
 package submarineGameProject.Classes;
 
 /**
-5 * This class represents a set of coordinates
-6 */
+* This class represents a set of coordinates
+*/
 public class Coordinate 
 {
 	// Coordinate fields
