@@ -1,8 +1,8 @@
 package submarineGameProject.Exceptions;
 
-public class SubmarineException extends Exception
+public class OutOfTargetsException extends Exception
 {
-	public SubmarineException() //outOff
+	public OutOfTargetsException() //outOff
 	{
 		super("Congratulations!! you found and hit the all submaraines!");
 	}

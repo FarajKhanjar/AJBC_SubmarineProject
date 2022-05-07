@@ -3,9 +3,9 @@ package submarineGameProject.Classes;
 import java.util.Arrays;
 import java.util.Random;
 
-import submarineGameProject.Exceptions.BoardException;
+import submarineGameProject.Exceptions.OutOfBoardException;
 import submarineGameProject.Exceptions.CoordinateException;
-import submarineGameProject.Exceptions.SubmarineException;
+import submarineGameProject.Exceptions.OutOfTargetsException;
 
 public class Board 
 {
@@ -129,6 +129,51 @@ public class Board
 					System.out.print(i + "  ");
 				}
 				
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void printWithout() 
+	{
+		int rowsNum = 10 ;
+
+		System.out.print("   ");
+		printRowNumbers(0, rowsNum);
+		printRowNumbers(rowsNum, COLS);
+		System.out.println();
+
+		for (int i = 0; i < ROWS; i++) 
+		{
+			for (int j = 0; j < COLS; j++) 
+			{
+				
+				if (j == 0) 
+				{
+					System.out.print(i + "  ");
+				}
+				if(j > 10)
+				{
+					if(XYmatrix[i][j] == '*')
+					{
+						System.out.print(" " + " " + "  ");
+					}
+					else
+					{
+					System.out.print(" " + XYmatrix[i][j] + "  ");
+					}
+				}
+				else
+				{
+					if(XYmatrix[i][j] == '*')
+					{
+						System.out.print(" " + "  ");
+					}
+					else
+					{
+					System.out.print(XYmatrix[i][j] + "  ");
+					}
+				}
 			}
 			System.out.println();
 		}

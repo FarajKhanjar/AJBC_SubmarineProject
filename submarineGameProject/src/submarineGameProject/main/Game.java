@@ -7,9 +7,9 @@ import javax.swing.JOptionPane;
 
 import submarineGameProject.Classes.Board;
 import submarineGameProject.Classes.Submarine;
-import submarineGameProject.Exceptions.BoardException;
+import submarineGameProject.Exceptions.OutOfBoardException;
 import submarineGameProject.Exceptions.CoordinateException;
-import submarineGameProject.Exceptions.SubmarineException;
+import submarineGameProject.Exceptions.OutOfTargetsException;
 
 public class Game 
 {
@@ -20,6 +20,7 @@ public class Game
 	private int missNumber;
 	private Status status;
 	private int points = 1000;
+	public static final int GUESSES_COORDINATE = 100;
 	private int secondtHitPoints;
 	public  int numberOfSubmarineThatFound = 1;
 	private int submarineLengthCounter=1;
@@ -51,6 +52,10 @@ public class Game
 	public int getPoints() 
 	{
 		return points;
+	}
+	
+	public Status getStatus() {
+		return status;
 	}
 	
 	
@@ -85,12 +90,11 @@ public class Game
 	{
 		setDoubleHit(false);
 		this.points = points - 10;
-
 	}
 	
 	
-	public void play() throws SubmarineException //throws BoardException, CoordinateException, SubmarineException 	
-, BoardException
+	public void play() throws OutOfTargetsException //throws BoardException, CoordinateException, SubmarineException 	
+, OutOfBoardException
 	{		
 		Random random = new Random();
 		int rowChoice;
@@ -105,13 +109,13 @@ public class Game
 		{	
 			while(breakOrContinue = true)
 			{
-				System.out.print("Enter row: ");
-				rowChoice = scanner.nextInt();
-				System.out.print("Enter col: ");
-				colChoice = scanner.nextInt();
+				//System.out.print("Enter row: ");
+				//rowChoice = scanner.nextInt();
+				//System.out.print("Enter col: ");
+				//colChoice = scanner.nextInt();
 
-				// rowChoice = random.nextInt(Board.ROWS);
-				// colChoice = random.nextInt(Board.COLS);		
+				 rowChoice = random.nextInt(Board.ROWS);
+				 colChoice = random.nextInt(Board.COLS);		
 				
 				flagCheckCoordinateOnBoard = checkIfCoordinateInRange(rowChoice,colChoice);	
 				if(flagCheckCoordinateOnBoard)
@@ -144,7 +148,8 @@ public class Game
 	{
 		System.out.println("Your Guess is: (" + rowChoice + "," + colChoice + ")");
 		scoreOfTheGame(board.changeTheBoard(rowChoice, colChoice));
-		Board.print();
+		//Board.print();
+		Board.printWithout();
 		System.out.println("The miss number is: " + this.missNumber);
 		System.out.println("The hit number is: " + this.hitsNumber);
 		statusInTheGame();
@@ -179,6 +184,10 @@ public class Game
 			return false;
 		}
 			
+	}
+	
+	public Board getBoard() {
+		return board;
 	}
 		
 	public void statusInTheGame() 
